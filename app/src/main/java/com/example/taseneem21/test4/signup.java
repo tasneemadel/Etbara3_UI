@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +15,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +38,9 @@ public class signup extends ActionBarActivity {
     Spinner city;
     Spinner zipcode;
     TextView loginTv;
-    public static final String REGISTER_URL = "http://simplifiedcoding.16mb.com/UserRegistration/volleyLogin.php";
+    public static final String REGISTER_URL = "http://http://192.168.2.10/api2/index.php";
 
-    public static final String KEY_USERNAME="username";
+    public static final String KEY_USERNAME="Name";
     public static final String KEY_PASSWORD="password";
     public static final String KEY_Email="Email";
     public static final String KEY_Bloodtype="BloodType";
@@ -38,8 +48,30 @@ public class signup extends ActionBarActivity {
     private EditText editTextPassword;
     private Button buttonLogin;
 
-    private String username;
-    private String password;
+    private String Blood;
+    private String Zipcode;
+    private String City;
+
+    public static final String KEY_EMAIL = "email";
+    // `phone`, `GroupID`, `Blood`, `birthDate`, `healthCondition`
+    public static final String KEY_PHONE = "Phone";
+    public static final String KEY_GROUPID = "GroupID";
+    public static final String KEY_Blood = "Blood";
+    public static final String KEY_BIRTHDATE = "birthDate";
+    public static final String KEY_HealthDate = "healthCondition";
+    public static final String KEY_City = "City";
+    public static final String KEY_ZipCode= "ZipCode";
+    public static final String KEY_Age= "Age";
+
+    private EditText editTextPhone;
+    private EditText editTextConfirmPass;
+    private EditText editTextBlood;
+
+    private EditText editTextbirthdate;
+    private EditText editTexthealthCondition;
+
+
+    private EditText editTextEmail;
 
     @Override
     public void onBackPressed() {
@@ -64,8 +96,16 @@ public class signup extends ActionBarActivity {
         passEt = (EditText) findViewById(R.id.input_password);
         emailE = (EditText) findViewById(R.id.input_email);
         loginTv = (TextView) findViewById(R.id.link_login);
+        editTextUsername = (EditText) findViewById(R.id.input_name);
+        editTextPassword = (EditText) findViewById(R.id.input_password);
+        editTextEmail= (EditText) findViewById(R.id.input_email);
 
+        //editTextBlood= (EditText) findViewById(R.id.blood);
+        editTextbirthdate= (EditText) findViewById(R.id.BirthDate);
 
+        editTexthealthCondition= (EditText) findViewById(R.id.Healthcondition);
+        editTextPhone= (EditText) findViewById(R.id.phone);
+        editTextConfirmPass=(EditText) findViewById(R.id.confirm_password);
         bloodtype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
 
@@ -139,9 +179,9 @@ public class signup extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-/*                Intent intent = new Intent(signup.this,login.class);
+                Intent intent = new Intent(signup.this,login.class);
                 startActivity(intent);
-                finish();*/
+                finish();
 
             }
         });
@@ -153,8 +193,7 @@ public class signup extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                final ProgressDialog progressDialog = new ProgressDialog(signup.this,
-                        R.style.AppTheme_Dark_Dialog);
+
 
                 if (userEt.getText().toString().equalsIgnoreCase("") || passEt.getText().toString().equalsIgnoreCase("") || emailE.getText().toString().equalsIgnoreCase("")) {
                     Toast.makeText(signup.this, "Please Complete the required Fields", Toast.LENGTH_SHORT).show();
@@ -162,12 +201,15 @@ public class signup extends ActionBarActivity {
 
                     // registerUser();
 
-                    Intent i=new Intent(signup.this,Home.class);
+                    //Intent i=new Intent(signup.this,Home.class);
 
-                    startActivity(i);
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setMessage("Processing...");
-                    progressDialog.show();
+                    //startActivity(i);
+                   try {
+                       registerUser();
+                   }
+                   catch(Exception e){
+                       Log.e("log_tag", "Error in http connection "+e.toString());
+                   }
 
             /*        final ParseUser parseUser = new ParseUser();
                     parseUser.setUsername(userEt.getText().toString());
@@ -214,14 +256,76 @@ public class signup extends ActionBarActivity {
     }
 
 
-    private void registerUser(){
 
 
+    private void registerUser() throws JSONException {
+        final ProgressDialog progressDialog = new ProgressDialog(signup.this,
+                R.style.AppTheme_Dark_Dialog);
 
+
+        final String username1 = editTextUsername.getText().toString().trim();
+        final String password1 = editTextPassword.getText().toString().trim();
+        final String email1 = editTextEmail.getText().toString().trim();
+
+
+        final String phone1 = editTextPhone.getText().toString().trim();
+       // final String blood1 = editTextBlood.getText().toString().trim();
+        final String birthdate1 = editTextbirthdate.getText().toString().trim();
+        final String healthcondition1 = editTexthealthCondition.getText().toString().trim();
+        final String passconfirm1 = editTextConfirmPass.getText().toString().trim();
+       Blood = bloodtype.getSelectedItem().toString();
+        Zipcode=zipcode.getSelectedItem().toString();
+        City=city.getSelectedItem().toString();
+        if (!passconfirm1.equalsIgnoreCase(password1)) {
+            editTextConfirmPass.setError("The password doesn't match");
+        } else {
+
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Processing...");
+            progressDialog.show();
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(signup.this, response, Toast.LENGTH_LONG).show();
+                            Log.d("Response", response);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(signup.this, error.toString(), Toast.LENGTH_LONG).show();
+                            Log.d("Error.Response", error.toString());
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put(KEY_USERNAME, username1);
+                    params.put(KEY_PASSWORD, password1);
+                    params.put(KEY_EMAIL, email1);
+
+                    params.put(KEY_BIRTHDATE, birthdate1);
+                    params.put(KEY_Blood, Blood);
+                    params.put(KEY_PHONE, phone1);
+                    params.put(KEY_HealthDate, healthcondition1);
+
+
+                    params.put(KEY_ZipCode, Zipcode);
+                    params.put(KEY_City, City);
+
+                    // params.put(KEY_GROUPID, GroupId);
+                    return params;
+                }
+            };
+
+
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.start();
+            requestQueue.add(stringRequest);
+            progressDialog.dismiss();
+            //  AppController.getInstance().addToRequestQueue(stringRequest, tag_json_obj);
+        }
 
     }
-
-
-
-
 }

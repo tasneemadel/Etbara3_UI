@@ -133,6 +133,42 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             />
+
+
+
+
+        <EditText android:id="@+id/Healthcondition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="Health Condition"
+            android:textColorHint="#FFFFFF"
+            android:textColor="@color/white"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            />
+
+        <EditText android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="Address"
+            android:textColorHint="#FFFFFF"
+            android:textColor="@color/white"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            />
+
+        <EditText android:id="@+id/BirthDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="BirthDate in format year/month/day"
+            android:textColorHint="#FFFFFF"
+            android:textColor="@color/white"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            />
         <!-- </android.support.design.widget.TextInputLayout> -->
 
         <!-- Signup Button -->
@@ -154,6 +190,8 @@
             android:id="@+id/city"
             android:textColor="#FFFFFF"
             />
+
+
 
         <Spinner
             android:layout_width="match_parent"

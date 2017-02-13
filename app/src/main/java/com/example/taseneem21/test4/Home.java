@@ -1,6 +1,8 @@
 package com.example.taseneem21.test4;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -20,7 +22,10 @@ public class Home extends ActionBarActivity {
     //ArrayList<Hospital> arrayList = new ArrayList<Hospital>();
    // CustomListAdapter customListAdapter;
     //Hospital hospital = new Hospital();
-    ArrayList<String> arrayList = new ArrayList<String>();
+    ArrayList<User> arrayList = new ArrayList<User>();
+    private CustomListAdapter adapter;
+
+
 
 
     @Override
@@ -31,11 +36,10 @@ public class Home extends ActionBarActivity {
         listView = (ListView) findViewById(R.id.list1);
 
 
+     adapter = new CustomListAdapter(arrayList, this);
+        listView.setAdapter(adapter);
 
-       // customListAdapter = new CustomListAdapter(arrayList,this);
-       // DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.listview_item_row, drawerItem);
 
-        //listView.setAdapter(customListAdapter);
 
 }
 
@@ -62,10 +66,7 @@ public class Home extends ActionBarActivity {
 
         }
         else if (id == R.id.log_out){
-            Intent i=new Intent(Home.this,login.class);
-
-            startActivity(i);
-            finish();
+            logout();
         }
 
         else if (id == R.id.request_blood){
@@ -84,5 +85,37 @@ public class Home extends ActionBarActivity {
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    void logout(){
+        //Creating an alert dialog to confirm logout
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Are you sure you want to logout?");
+        alertDialogBuilder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                        Intent i=new Intent(Home.this,login.class);
+
+                        startActivity(i);
+                        finish();
+                        //   Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                        // startActivity(intent);
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+
+        //Showing the alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
     }
 }
